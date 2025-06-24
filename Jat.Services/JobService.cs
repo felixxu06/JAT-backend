@@ -84,16 +84,15 @@ namespace Jat.Services
             }
             job.Status = Enum.TryParse<EntityJobStatus>(status.ToString(), out var entityStatus) ? entityStatus : EntityJobStatus.Open;
             job.UpdateTimestamp();
-            // enable fake transaction
+            // to-do: enable fake transaction
             try
             {
                 if (status == DTOJobStatus.Closed)
                 {
-                    // If the job is closed, we might want to update the status of all applicants
                     var applicants = await _applicantRepository.GetAllByJobIdAsync(id);
                     foreach (var applicant in applicants)
                     {
-                        applicant.Status = Entities.ApplicantStatus.Rejected; // Assuming you have a Closed status in your ApplicantStatus enum
+                        applicant.Status = Entities.ApplicantStatus.Rejected;
                         await _applicantRepository.UpdateAsync(applicant.Id, applicant);
                     }
                 }
@@ -101,8 +100,7 @@ namespace Jat.Services
             }
             catch (Exception ex)
             {
-                // TODO
-                // rollback transaction
+                // to-do: rollback transaction
                 throw new InvalidOperationException($"Failed to update job status for job ID {id}.", ex);
             }
         }
