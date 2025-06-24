@@ -1,0 +1,6 @@
+@jat.webapi_HostAddress = http://localhost:5275
+
+GET {{jat.webapi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
