@@ -4,6 +4,13 @@ which is designed to help users manage their job applications efficiently.
 
 System provides a set of APIs that allow users to create, read, update, and delete jobs and applications.
 
+## Assumptions
+- The project assumes that you have Docker installed on your machine.
+- The project is built using .NET 8, so you need to have the .NET 8 SDK installed.
+- The project uses Entity Framework Core for database operations.
+- The project use in-memory database, so when you restart the application, all data will be lost.
+- All data delete is soft delete
+
 # Start
 To start the project, you need to have .NET 8 installed on your machine.
 You can run the project using the following command:
