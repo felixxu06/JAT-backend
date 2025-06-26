@@ -48,7 +48,7 @@ namespace Jat.Tests
         [Fact]
         public async Task AddApplicantAsync_CallsRepository()
         {
-            var applicant = new ApplicantDto { FirstName = "John", LastName = "Doe" };
+            var applicant = new ApplicantDto { FirstName = "John", LastName = "Doe", Email="dsfasd@gmail.com" };
 
             await _applicantService.AddApplicantAsync(applicant);
 
