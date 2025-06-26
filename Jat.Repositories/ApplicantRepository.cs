@@ -67,5 +67,11 @@ namespace Jat.Repositories
         {
             return Task.FromResult(_db.Applicants.Values.Where(app=>app.JobId == jobId));
         }
+
+        public Task<int> GetTotalCountAsync()
+        {
+            var totalCount = _db.Applicants.Values.Count(a => !a.Deleted);
+            return Task.FromResult(totalCount);
+        }
     }
 }

@@ -18,10 +18,13 @@ namespace Jat.Services
             _applicantRepository = applicantRepository;
         }
 
-        public async Task<IEnumerable<JobDto>> GetAllJobsAsync(int pageNumber, int pageSize)
+        public async Task<(IEnumerable<JobDto> Jobs, int TotalCount, int TotalPages)> GetAllJobsAsync(int pageNumber, int pageSize)
         {
             var jobs = await _repository.GetAllAsync(pageNumber, pageSize);
-            return jobs.Select(job => new JobDto
+            var totalCount = await _repository.GetTotalCountAsync();
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            var jobDtos = jobs.Select(job => new JobDto
             {
                 Id = job.Id,
                 CompanyName = job.CompanyName,
@@ -29,6 +32,8 @@ namespace Jat.Services
                 Status = Enum.TryParse<DTOJobStatus>(job.Status.ToString(), out var status) ? status : null,
                 DateApplied = job.DateApplied
             });
+
+            return (jobDtos, totalCount, totalPages);
         }
 
         public async Task<JobDto?> GetJobByIdAsync(long id)
@@ -45,27 +50,43 @@ namespace Jat.Services
             };
         }
 
+        private void ValidateJobDto(JobDto jobDto)
+        {
+            if (jobDto == null)
+                throw new ArgumentNullException(nameof(jobDto));
+            if (string.IsNullOrWhiteSpace(jobDto.CompanyName))
+                throw new ArgumentException("CompanyName is required.");
+            if (string.IsNullOrWhiteSpace(jobDto.Position))
+                throw new ArgumentException("Position is required.");
+        }
+
         public async Task AddJobAsync(JobDto jobDto)
         {
+            ValidateJobDto(jobDto);
             var job = new Job
             {
                 CompanyName = jobDto.CompanyName,
                 Position = jobDto.Position,
-                Status = jobDto.Status.HasValue && Enum.TryParse<EntityJobStatus>(jobDto.Status.ToString(), out var status) ? status : EntityJobStatus.Open,
-                DateApplied = jobDto.DateApplied
+                Status = EntityJobStatus.Open,
             };
             await _repository.AddAsync(job);
         }
 
         public async Task UpdateJobAsync(long id, JobDto jobDto)
         {
+            ValidateJobDto(jobDto);
+            var existingJob = await _repository.GetByIdAsync(id);
+            if(existingJob == null)
+            {
+                throw new KeyNotFoundException($"Job with ID {id} not found.");
+            }
             var job = new Job
             {
                 Id = id,
                 CompanyName = jobDto.CompanyName,
                 Position = jobDto.Position,
-                Status = jobDto.Status.HasValue && Enum.TryParse<EntityJobStatus>(jobDto.Status.ToString(), out var status) ? status : EntityJobStatus.Open,
-                DateApplied = jobDto.DateApplied
+                Status = jobDto.Status.HasValue && Enum.TryParse<EntityJobStatus>(jobDto.Status.ToString(), out var status) ? status : existingJob.Status,
+                DateApplied = jobDto.DateApplied.HasValue ? jobDto.DateApplied.Value : existingJob.DateApplied
             };
             await _repository.UpdateAsync(id, job);
         }

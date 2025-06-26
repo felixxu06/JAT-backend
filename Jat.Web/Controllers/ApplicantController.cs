@@ -15,11 +15,22 @@ namespace Jat.Web.Controllers
             _applicantService = applicantService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllApplicants([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        [HttpGet("page/{pageNumber}/size/{pageSize}")]
+        public async Task<IActionResult> GetAllApplicants(int pageNumber = 1, int pageSize = 10)
         {
-            var applicants = await _applicantService.GetAllApplicantsAsync(pageNumber, pageSize);
-            return Ok(applicants);
+            var (applicants, totalCount, totalPages) = await _applicantService.GetAllApplicantsAsync(pageNumber, pageSize);
+            var response = new
+            {
+                Data = applicants,
+                Pagination = new
+                {
+                    PageNumber = pageNumber,
+                    PageSize = pageSize,
+                    TotalCount = totalCount,
+                    TotalPages = totalPages
+                }
+            };
+            return Ok(response);
         }
 
         [HttpGet("{id}")]

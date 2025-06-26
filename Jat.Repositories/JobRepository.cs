@@ -62,5 +62,11 @@ namespace Jat.Repositories
             }
             return Task.CompletedTask;
         }
+
+        public Task<int> GetTotalCountAsync()
+        {
+            var totalCount = _db.Jobs.Values.Count(j => !j.Deleted);
+            return Task.FromResult(totalCount);
+        }
     }
 }

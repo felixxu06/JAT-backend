@@ -18,15 +18,14 @@ namespace Jat.Entities
         [Required]
         public JobStatus Status { get; set; } = JobStatus.Open;
 
-        [Required]
-        public DateTime DateApplied { get; set; } = DateTime.UtcNow;
+        public DateTime? DateApplied { get; set; } = null;
 
         // Actions like Edit are typically handled in the UI, not as entity properties.
         // If you want to track edits, you can use the UpdatedAt/UpdatedBy from BaseEntity.
 
         public override string? ToString()
         {
-            return $"{CompanyName} - {Position} ({Status}) applied on {DateApplied:yyyy-MM-dd}";
+            return $"{CompanyName} - {Position} ({Status})";
         }
     }
 }

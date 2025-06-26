@@ -26,12 +26,6 @@ namespace Jat.Entities
         [MaxLength(1000)]
         public string Description { get; set; } = string.Empty;
 
-        [Url, MaxLength(200)]
-        public string? LinkedInProfile { get; set; }
-
-        [MaxLength(200)]
-        public string? ResumeFilePath { get; set; }
-
         public Int64? JobId { get; set; }
 
         public override string? ToString()

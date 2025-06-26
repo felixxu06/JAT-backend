@@ -20,15 +20,18 @@ namespace Jat.Tests
         }
 
         [Fact]
-        public async Task GetAllJobsAsync_ReturnsJobs()
+        public async Task GetAllJobsAsync_ReturnsJobsWithPagination()
         {
             var jobs = new List<Job> { new Job { Id = 1, CompanyName = "Test Company", Position = "Developer" } };
             _jobRepositoryMock.Setup(repo => repo.GetAllAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(jobs);
+            _jobRepositoryMock.Setup(repo => repo.GetTotalCountAsync()).ReturnsAsync(1);
 
-            var result = await _jobService.GetAllJobsAsync(1, 10);
+            var (resultJobs, totalCount, totalPages) = await _jobService.GetAllJobsAsync(1, 10);
 
-            Assert.NotNull(result);
-            Assert.Single(result);
+            Assert.NotNull(resultJobs);
+            Assert.Single(resultJobs);
+            Assert.Equal(1, totalCount);
+            Assert.Equal(1, totalPages);
         }
 
         [Fact]

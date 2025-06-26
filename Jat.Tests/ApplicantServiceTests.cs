@@ -19,15 +19,18 @@ namespace Jat.Tests
         }
 
         [Fact]
-        public async Task GetAllApplicantsAsync_ReturnsApplicants()
+        public async Task GetAllApplicantsAsync_ReturnsApplicantsWithPagination()
         {
             var applicants = new List<Applicant> { new Applicant { Id = 1, FirstName = "John", LastName = "Doe" } };
             _applicantRepositoryMock.Setup(repo => repo.GetAllAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(applicants);
+            _applicantRepositoryMock.Setup(repo => repo.GetTotalCountAsync()).ReturnsAsync(1);
 
-            var result = await _applicantService.GetAllApplicantsAsync(1, 10);
+            var (resultApplicants, totalCount, totalPages) = await _applicantService.GetAllApplicantsAsync(1, 10);
 
-            Assert.NotNull(result);
-            Assert.Single(result);
+            Assert.NotNull(resultApplicants);
+            Assert.Single(resultApplicants);
+            Assert.Equal(1, totalCount);
+            Assert.Equal(1, totalPages);
         }
 
         [Fact]

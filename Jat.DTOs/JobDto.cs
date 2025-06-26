@@ -6,6 +6,6 @@
         public string CompanyName { get; set; } = string.Empty;
         public string Position { get; set; } = string.Empty;
         public JobStatus? Status { get; set; } = null;
-        public DateTime DateApplied { get; set; }
+        public DateTime? DateApplied { get; set; }
     }
 }

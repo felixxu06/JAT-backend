@@ -11,5 +11,6 @@ namespace Jat.IRepositories
         Task AddAsync(Job job);
         Task UpdateAsync(long id, Job job);
         Task DeleteAsync(long id);
+        Task<int> GetTotalCountAsync();
     }
 }

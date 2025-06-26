@@ -15,11 +15,22 @@ namespace Jat.Web.Controllers
             _jobService = jobService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllJobs([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        [HttpGet("page/{pageNumber}/size/{pageSize}")]
+        public async Task<IActionResult> GetAllJobs(int pageNumber = 1, int pageSize = 10)
         {
-            var jobs = await _jobService.GetAllJobsAsync(pageNumber, pageSize);
-            return Ok(jobs);
+            var (jobs, totalCount, totalPages) = await _jobService.GetAllJobsAsync(pageNumber, pageSize);
+            var response = new
+            {
+                Data = jobs,
+                Pagination = new
+                {
+                    PageNumber = pageNumber,
+                    PageSize = pageSize,
+                    TotalCount = totalCount,
+                    TotalPages = totalPages
+                }
+            };
+            return Ok(response);
         }
 
         [HttpGet("{id}")]

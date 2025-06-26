@@ -31,14 +31,15 @@ builder.Services.AddSwaggerGen();
 
 // Configure CORS
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
-
+Console.WriteLine($"Allowed Origins: {string.Join(", ", allowedOrigins ?? Array.Empty<string>())}");
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("ConfiguredCors", policy =>
     {
         policy.WithOrigins(allowedOrigins ?? Array.Empty<string>())
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 
